@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Le grimoire du trading desk — Flashcards finance</title>
+<meta name="description" content="Flashcards et quiz sur la finance de marché et la finance quantitative.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,500&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink-900: #0B1220;
+  --ink-800: #131D31;
+  --ink-700: #1C2A44;
+  --paper: #F6F1E4;
+  --gold: #C9962C;
+  --rose: #B5484F;
+  --sage: #4F7A6B;
+  --ink-400: #8A93A6;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background: var(--ink-900);
+  color: var(--paper);
+  min-height: 100vh;
+  padding: 28px 18px 60px;
+}
+button { font-family: inherit; cursor: pointer; }
+svg { display: block; }
+
+.home { max-width: 640px; margin: 0 auto; }
+.hero-eyebrow { font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .14em; color: var(--gold); margin-bottom: 10px; }
+.hero-title { font-family: 'Newsreader', serif; font-weight: 500; font-size: clamp(30px, 8vw, 42px); line-height: 1.08; margin: 0 0 12px; }
+.hero-accent { font-style: italic; color: var(--gold); }
+.hero-sub { color: var(--ink-400); font-size: 14.5px; line-height: 1.5; margin: 0 0 22px; max-width: 46ch; }
+
+.ticker-wrap { overflow: hidden; border-top: 1px solid var(--ink-700); border-bottom: 1px solid var(--ink-700); padding: 10px 0; margin-bottom: 26px; }
+.ticker-track { display: flex; gap: 28px; width: max-content; animation: scroll-ticker 22s linear infinite; }
+@keyframes scroll-ticker { from { transform: translateX(0); } to { transform: translateX(-33.333%); } }
+.ticker-item { display: flex; align-items: center; gap: 6px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; white-space: nowrap; color: var(--ink-400); }
+.ticker-sym { color: var(--paper); font-weight: 600; }
+.ticker-up { color: var(--sage); }
+.ticker-down { color: var(--ink-400); }
+
+.deck-select { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+.deck-tab { display: flex; align-items: center; gap: 7px; background: var(--ink-800); border: 1px solid var(--ink-700); color: var(--ink-400); padding: 10px 14px; border-radius: 8px; font-size: 13.5px; font-weight: 600; transition: all .15s ease; }
+.deck-tab.active { color: var(--paper); border-color: var(--accent); background: var(--ink-700); }
+.deck-tab svg { color: var(--accent); }
+
+.sub-chips { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 26px; }
+.chip { background: transparent; border: 1px solid var(--ink-700); color: var(--ink-400); padding: 6px 11px; border-radius: 999px; font-size: 12.5px; }
+.chip-active { border-color: var(--accent); color: var(--paper); background: rgba(255,255,255,0.04); }
+
+.mode-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 480px) { .mode-cards { grid-template-columns: 1fr; } }
+.mode-card { background: var(--ink-800); border: 1px solid var(--ink-700); border-radius: 12px; padding: 20px 18px; }
+.mode-card-label { font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; color: var(--accent); letter-spacing: .1em; margin-bottom: 8px; }
+.mode-card h3 { font-family: 'Newsreader', serif; font-size: 22px; margin: 0 0 6px; font-weight: 600; }
+.mode-card p { color: var(--ink-400); font-size: 13px; margin: 0 0 16px; line-height: 1.4; }
+.mode-btn { display: inline-flex; align-items: center; gap: 6px; background: var(--accent); color: var(--ink-900); border: none; padding: 9px 14px; border-radius: 7px; font-weight: 700; font-size: 13px; }
+
+.mode-screen { max-width: 560px; margin: 0 auto; }
+.mode-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+.exit-btn { display: flex; align-items: center; gap: 5px; background: none; border: none; color: var(--ink-400); font-size: 13px; }
+.exit-btn:hover { color: var(--paper); }
+.progress-label { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--ink-400); }
+.progress-bar { height: 3px; background: var(--ink-700); border-radius: 3px; margin-bottom: 20px; overflow: hidden; }
+.progress-fill { height: 100%; background: var(--accent); transition: width .3s ease; }
+
+.card-stage { perspective: 1400px; margin-bottom: 22px; }
+.flash-card { position: relative; min-height: 320px; border-radius: 14px; cursor: pointer; transform-style: preserve-3d; transition: transform .5s cubic-bezier(.4,.2,.2,1); }
+.flash-card.is-flipped { transform: rotateY(180deg); }
+.flash-face { position: absolute; inset: 0; backface-visibility: hidden; border-radius: 14px; padding: 30px 26px; display: flex; flex-direction: column; box-shadow: 0 12px 30px rgba(0,0,0,0.35); }
+.flash-front { justify-content: space-between; background: var(--paper); color: var(--ink-900); background-image: repeating-linear-gradient(to bottom, transparent, transparent 30px, rgba(0,0,0,0.035) 31px); }
+.flash-back { transform: rotateY(180deg); background: var(--ink-800); color: var(--paper); justify-content: center; align-items: flex-start; }
+.flash-tag { font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: .08em; color: var(--accent); text-transform: uppercase; margin-bottom: 12px; align-self: flex-start; border: 1px solid var(--accent); padding: 3px 8px; border-radius: 4px; }
+.flash-q { font-family: 'Newsreader', serif; font-size: 23px; line-height: 1.32; font-weight: 500; }
+.flash-hint { font-size: 11.5px; color: #7a7460; align-self: center; margin-top: 12px; }
+.flash-a { font-size: 16px; line-height: 1.55; }
+
+.nav-row { display: flex; align-items: center; justify-content: center; gap: 12px; }
+.nav-btn { background: var(--ink-800); border: 1px solid var(--ink-700); color: var(--paper); width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+.nav-btn-flip { width: auto; border-radius: 8px; padding: 0 16px; gap: 6px; font-size: 13px; font-weight: 600; }
+
+.quiz-card { background: var(--ink-800); border: 1px solid var(--ink-700); border-radius: 12px; padding: 22px 20px; margin-bottom: 18px; }
+.quiz-q { font-family: 'Newsreader', serif; font-size: 20px; line-height: 1.36; margin: 10px 0 18px; font-weight: 500; }
+.quiz-options { display: flex; flex-direction: column; gap: 9px; }
+.quiz-option { display: flex; align-items: center; gap: 10px; text-align: left; background: var(--ink-900); border: 1px solid var(--ink-700); color: var(--paper); padding: 12px 14px; border-radius: 9px; font-size: 14px; width: 100%; }
+.opt-letter { font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; color: var(--ink-400); border: 1px solid var(--ink-700); width: 22px; height: 22px; border-radius: 5px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.opt-correct { border-color: var(--sage); background: rgba(79,122,107,0.15); }
+.opt-wrong { border-color: var(--rose); background: rgba(181,72,79,0.15); }
+.opt-icon { margin-left: auto; }
+.quiz-explain { margin-top: 16px; padding-top: 14px; border-top: 1px dashed var(--ink-700); font-size: 13.5px; line-height: 1.55; color: var(--ink-400); }
+.quiz-explain-label { font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; color: var(--accent); letter-spacing: .08em; margin-bottom: 6px; }
+.quiz-next { width: 100%; justify-content: center; padding: 13px; font-size: 14px; }
+
+.result-panel { text-align: center; padding: 40px 10px; }
+.result-eyebrow { font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .12em; color: var(--ink-400); margin-bottom: 18px; }
+.result-score { font-family: 'Newsreader', serif; font-size: 64px; font-weight: 600; color: var(--accent); }
+.result-total { font-size: 28px; color: var(--ink-400); }
+.result-pct { font-size: 14px; margin: 6px 0 26px; }
+.missed-list { text-align: left; background: var(--ink-800); border: 1px solid var(--ink-700); border-radius: 10px; padding: 16px 18px; margin-bottom: 24px; }
+.missed-title { font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; color: var(--rose); letter-spacing: .08em; margin-bottom: 10px; }
+.missed-item { font-size: 13px; color: var(--ink-400); padding: 6px 0; border-bottom: 1px solid var(--ink-700); }
+.missed-item:last-child { border-bottom: none; }
+.missed-more { font-size: 12px; color: var(--ink-400); margin-top: 8px; }
+.result-btn { width: 100%; justify-content: center; padding: 13px; }
+
+footer.site-footer { max-width: 560px; margin: 40px auto 0; text-align: center; font-size: 11.5px; color: var(--ink-700); font-family: 'IBM Plex Mono', monospace; }
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+/* ------------------------------------------------------------------ */
+/* DONNÉES                                                             */
+/* ------------------------------------------------------------------ */
+const DECKS = {
+  marche: { label: "Finance de marché", short: "MARCHÉ", accent: "#C9962C",
+    subs: ["Actions", "Taux & Obligations", "Dérivés", "Change", "Gestion des risques"] },
+  quant: { label: "Finance quantitative", short: "QUANT", accent: "#4F7A6B",
+    subs: ["Calcul stochastique", "Pricing d'options", "Grecques", "Portefeuille", "Séries temporelles"] },
+};
+
+const CARDS = [
+  { id: 1, deck: "marche", sub: "Actions", q: "Qu'est-ce que le PER (Price Earning Ratio) ?", a: "Le prix de l'action divisé par le bénéfice net par action. Il mesure combien de fois on paie les bénéfices annuels de l'entreprise.", options: ["Le prix / bénéfice par action", "La dette / capitaux propres", "Le dividende / cours", "Le chiffre d'affaires / capitalisation"], correct: 0 },
+  { id: 2, deck: "marche", sub: "Actions", q: "Que mesure le beta d'une action ?", a: "La sensibilité du rendement de l'action aux mouvements du marché (risque systématique).", options: ["La volatilité totale de l'action", "La sensibilité au marché (risque systématique)", "Le rendement du dividende", "La liquidité du titre"], correct: 1 },
+  { id: 3, deck: "marche", sub: "Actions", q: "Qu'est-ce qu'une augmentation de capital ?", a: "Une émission de nouvelles actions par l'entreprise pour lever des fonds, ce qui dilue les actionnaires existants.", options: ["Un rachat d'actions", "Une émission d'obligations", "Une émission de nouvelles actions", "Une distribution de dividendes"], correct: 2 },
+  { id: 4, deck: "marche", sub: "Actions", q: "Qu'appelle-t-on le 'short selling' ?", a: "Vendre un titre emprunté en espérant le racheter moins cher plus tard pour le rendre, et empocher la différence.", options: ["Acheter à crédit", "Vendre à découvert un titre emprunté", "Acheter et revendre le jour même", "Investir sur le long terme"], correct: 1 },
+  { id: 5, deck: "marche", sub: "Taux & Obligations", q: "Comment évolue le prix d'une obligation quand les taux montent ?", a: "Le prix baisse : relation inverse entre taux d'intérêt et prix obligataire, car les flux futurs sont actualisés à un taux plus élevé.", options: ["Il monte", "Il baisse", "Il reste stable", "Cela dépend du coupon"], correct: 1 },
+  { id: 6, deck: "marche", sub: "Taux & Obligations", q: "Qu'est-ce que la duration d'une obligation ?", a: "La sensibilité (approximativement linéaire) du prix de l'obligation à une variation des taux, exprimée en années.", options: ["La maturité résiduelle", "La sensibilité du prix aux taux", "Le taux de coupon", "Le rendement à l'échéance"], correct: 1 },
+  { id: 7, deck: "marche", sub: "Taux & Obligations", q: "Qu'est-ce que le YTM (Yield to Maturity) ?", a: "Le taux de rendement actuariel qui égalise le prix de marché de l'obligation à la valeur actualisée de tous ses flux futurs.", options: ["Le taux de coupon annuel", "Le rendement actuariel jusqu'à l'échéance", "Le taux sans risque", "Le spread de crédit"], correct: 1 },
+  { id: 8, deck: "marche", sub: "Taux & Obligations", q: "Qu'est-ce qu'une courbe des taux inversée ?", a: "Une situation où les taux courts sont plus élevés que les taux longs, souvent perçue comme un signal avancé de récession.", options: ["Taux longs > taux courts", "Taux courts > taux longs", "Tous les taux sont égaux", "Les taux sont négatifs"], correct: 1 },
+  { id: 9, deck: "marche", sub: "Dérivés", q: "Quelle est la différence entre un future et un forward ?", a: "Le future est standardisé et coté sur un marché organisé avec appels de marge quotidiens ; le forward est un contrat de gré à gré (OTC).", options: ["Aucune différence", "Le future est coté et standardisé, le forward est OTC", "Le forward est coté, le future est OTC", "Le future ne concerne que les devises"], correct: 1 },
+  { id: 10, deck: "marche", sub: "Dérivés", q: "Qu'est-ce qu'un swap de taux d'intérêt (IRS) ?", a: "Un échange de flux d'intérêts entre deux parties, typiquement taux fixe contre taux variable, sur un notionnel donné.", options: ["Un échange de devises", "Un échange de flux fixe contre variable", "Un achat d'obligation", "Une option sur indice"], correct: 1 },
+  { id: 11, deck: "marche", sub: "Dérivés", q: "Qu'est-ce que le payoff d'un call à maturité ?", a: "max(S − K, 0), où S est le prix du sous-jacent et K le strike.", options: ["max(K − S, 0)", "max(S − K, 0)", "S − K", "min(S, K)"], correct: 1 },
+  { id: 12, deck: "marche", sub: "Dérivés", q: "Qu'est-ce qu'un CDS (Credit Default Swap) ?", a: "Un contrat d'assurance contre le défaut d'un émetteur : l'acheteur paie une prime périodique et reçoit un paiement en cas d'événement de crédit.", options: ["Une assurance contre le risque de change", "Une assurance contre le défaut d'un émetteur", "Un swap de taux", "Une option sur obligation"], correct: 1 },
+  { id: 13, deck: "marche", sub: "Change", q: "Qu'est-ce que la parité de pouvoir d'achat (PPA) ?", a: "La théorie selon laquelle le taux de change entre deux monnaies s'ajuste pour égaliser le prix d'un même panier de biens dans les deux pays.", options: ["L'égalité des taux d'intérêt", "L'égalisation du prix des biens entre pays", "L'équilibre de la balance commerciale", "La fixité des taux de change"], correct: 1 },
+  { id: 14, deck: "marche", sub: "Change", q: "Que dit la relation de parité des taux d'intérêt couverte ?", a: "Le différentiel de taux d'intérêt entre deux devises est compensé par le différentiel entre le taux forward et le taux spot, empêchant l'arbitrage.", options: ["Les taux d'intérêt sont toujours égaux", "Le différentiel de taux est reflété dans le forward", "Le spot égale toujours le forward", "L'inflation n'a pas d'effet sur le change"], correct: 1 },
+  { id: 15, deck: "marche", sub: "Change", q: "Qu'est-ce qu'un carry trade ?", a: "Emprunter dans une devise à taux bas pour investir dans une devise à taux élevé, en pariant sur la stabilité du taux de change.", options: ["Un arbitrage sur obligations", "Emprunter à taux bas pour investir à taux haut", "Une couverture de change parfaite", "Un swap de devises sans risque"], correct: 1 },
+  { id: 16, deck: "marche", sub: "Gestion des risques", q: "Qu'est-ce que la VaR (Value at Risk) à 99% sur 1 jour ?", a: "La perte maximale qui ne devrait pas être dépassée avec 99% de probabilité sur un horizon d'un jour.", options: ["La perte moyenne quotidienne", "La perte maximale théorique absolue", "La perte non dépassée avec 99% de probabilité sur 1 jour", "Le capital réglementaire minimum"], correct: 2 },
+  { id: 17, deck: "marche", sub: "Gestion des risques", q: "Quelle est la limite principale de la VaR ?", a: "Elle ne dit rien sur l'ampleur des pertes au-delà du seuil (queue de distribution) — c'est pourquoi on utilise aussi l'Expected Shortfall (CVaR).", options: ["Elle est trop complexe à calculer", "Elle ignore l'ampleur des pertes extrêmes au-delà du seuil", "Elle ne s'applique qu'aux actions", "Elle surestime toujours le risque"], correct: 1 },
+  { id: 18, deck: "marche", sub: "Gestion des risques", q: "Qu'est-ce que le risque de contrepartie ?", a: "Le risque qu'une contrepartie fasse défaut avant l'échéance d'un contrat, ne pouvant honorer ses engagements.", options: ["Le risque de variation du marché", "Le risque que la contrepartie fasse défaut", "Le risque de change", "Le risque de liquidité"], correct: 1 },
+  { id: 19, deck: "quant", sub: "Calcul stochastique", q: "Qu'est-ce qu'un mouvement brownien standard ?", a: "Un processus stochastique à accroissements indépendants et gaussiens, W(0)=0, de variance égale au temps écoulé.", options: ["Un processus déterministe", "Un processus à accroissements gaussiens indépendants", "Une suite de nombres aléatoires uniformes", "Un processus à mémoire longue"], correct: 1 },
+  { id: 20, deck: "quant", sub: "Calcul stochastique", q: "Que dit le lemme d'Itô intuitivement ?", a: "C'est la formule de dérivation en chaîne pour les processus stochastiques : elle ajoute un terme de convexité (second ordre) lié à la variance.", options: ["Une méthode d'intégration numérique", "La règle de dérivation en chaîne pour processus stochastiques", "Un test de normalité", "Une méthode de simulation de Monte-Carlo"], correct: 1 },
+  { id: 21, deck: "quant", sub: "Calcul stochastique", q: "Qu'est-ce qu'une mesure risque-neutre ?", a: "Une mesure de probabilité sous laquelle le prix actualisé des actifs est une martingale, permettant de pricer sans référence à l'aversion au risque des agents.", options: ["La probabilité historique réelle", "Une mesure sous laquelle les actifs actualisés sont des martingales", "Une mesure qui élimine toute volatilité", "La probabilité de défaut"], correct: 1 },
+  { id: 22, deck: "quant", sub: "Calcul stochastique", q: "Qu'est-ce que le processus d'Ornstein-Uhlenbeck ?", a: "Un processus stochastique à retour à la moyenne (mean-reverting), souvent utilisé pour modéliser les taux d'intérêt.", options: ["Un processus purement aléatoire sans structure", "Un processus à retour à la moyenne", "Un processus toujours croissant", "Un processus discret"], correct: 1 },
+  { id: 23, deck: "quant", sub: "Pricing d'options", q: "Quelles sont les hypothèses clés du modèle de Black-Scholes ?", a: "Volatilité et taux sans risque constants, mouvement brownien géométrique pour le sous-jacent, pas de coûts de transaction, marchés sans arbitrage.", options: ["Volatilité stochastique et taux variable", "Volatilité et taux constants, log-normalité du sous-jacent", "Sous-jacent suivant une marche binomiale uniquement", "Présence de dividendes discrets obligatoires"], correct: 1 },
+  { id: 24, deck: "quant", sub: "Pricing d'options", q: "Qu'est-ce que la volatilité implicite ?", a: "La volatilité qui, injectée dans un modèle de pricing (ex: Black-Scholes), redonne le prix de marché observé de l'option.", options: ["La volatilité historique réalisée", "La volatilité qui égalise le prix modèle au prix de marché", "La volatilité moyenne sur 10 ans", "La volatilité du taux sans risque"], correct: 1 },
+  { id: 25, deck: "quant", sub: "Pricing d'options", q: "Qu'est-ce que le 'smile de volatilité' ?", a: "La courbe montrant que la volatilité implicite varie selon le strike, contredisant l'hypothèse de volatilité constante de Black-Scholes.", options: ["La volatilité constante quel que soit le strike", "La variation de volatilité implicite selon le strike", "La volatilité des taux d'intérêt", "Un indicateur de tendance haussière"], correct: 1 },
+  { id: 26, deck: "quant", sub: "Pricing d'options", q: "Comment fonctionne le modèle binomial de Cox-Ross-Rubinstein ?", a: "Il discrétise le temps en pas où le sous-jacent monte ou descend d'un facteur fixe, puis actualise les payoffs en probabilité risque-neutre par récurrence arrière.", options: ["Il résout une EDP en continu", "Il discrétise le prix en arbre à deux issues par pas", "Il utilise uniquement des simulations Monte-Carlo", "Il suppose un sous-jacent déterministe"], correct: 1 },
+  { id: 27, deck: "quant", sub: "Grecques", q: "Que mesure le Delta d'une option ?", a: "La sensibilité du prix de l'option à une variation du prix du sous-jacent (∂Prix/∂S).", options: ["La sensibilité au temps", "La sensibilité au sous-jacent", "La sensibilité à la volatilité", "La sensibilité au taux d'intérêt"], correct: 1 },
+  { id: 28, deck: "quant", sub: "Grecques", q: "Que mesure le Gamma d'une option ?", a: "La convexité du prix par rapport au sous-jacent, c'est-à-dire la variation du Delta quand S varie (∂²Prix/∂S²).", options: ["La variation du Delta", "La sensibilité au temps", "La sensibilité à la volatilité", "Le taux de décroissance temporelle"], correct: 0 },
+  { id: 29, deck: "quant", sub: "Grecques", q: "Que mesure le Vega d'une option ?", a: "La sensibilité du prix de l'option à une variation de la volatilité implicite du sous-jacent.", options: ["La sensibilité au temps", "La sensibilité à la volatilité", "La sensibilité au taux sans risque", "La sensibilité au dividende"], correct: 1 },
+  { id: 30, deck: "quant", sub: "Grecques", q: "Que mesure le Theta d'une option ?", a: "La décroissance de la valeur temps de l'option au fil du temps, toutes choses égales par ailleurs (∂Prix/∂t).", options: ["La sensibilité au sous-jacent", "La décroissance de la valeur temps", "La sensibilité au taux", "La convexité du prix"], correct: 1 },
+  { id: 31, deck: "quant", sub: "Portefeuille", q: "Qu'est-ce que la frontière efficiente de Markowitz ?", a: "L'ensemble des portefeuilles offrant le meilleur rendement espéré pour un niveau de risque donné (ou le risque minimal pour un rendement donné).", options: ["L'ensemble de tous les portefeuilles possibles", "Les portefeuilles optimaux rendement/risque", "Le portefeuille de marché uniquement", "Les portefeuilles sans risque"], correct: 1 },
+  { id: 32, deck: "quant", sub: "Portefeuille", q: "Que dit le CAPM (Capital Asset Pricing Model) ?", a: "Le rendement espéré d'un actif est égal au taux sans risque plus une prime de risque proportionnelle à son beta : E[R] = Rf + β(E[Rm] − Rf).", options: ["Tous les actifs ont le même rendement espéré", "Le rendement dépend uniquement de la volatilité totale", "Le rendement espéré est fonction linéaire du beta", "Le rendement est indépendant du marché"], correct: 2 },
+  { id: 33, deck: "quant", sub: "Portefeuille", q: "Qu'est-ce que le ratio de Sharpe ?", a: "L'excès de rendement par unité de risque total : (rendement du portefeuille − taux sans risque) / écart-type du portefeuille.", options: ["Rendement / beta", "(Rendement − taux sans risque) / écart-type", "Rendement / capitalisation", "Volatilité / rendement"], correct: 1 },
+  { id: 34, deck: "quant", sub: "Séries temporelles", q: "Qu'est-ce qu'un modèle GARCH sert à modéliser ?", a: "La volatilité conditionnelle variable dans le temps, avec des périodes de forte et faible volatilité (clustering de volatilité).", options: ["Une tendance linéaire déterministe", "Le clustering de volatilité dans le temps", "La corrélation entre deux actifs", "Le taux sans risque"], correct: 1 },
+  { id: 35, deck: "quant", sub: "Séries temporelles", q: "Qu'est-ce que la stationnarité d'une série temporelle ?", a: "Une propriété où la moyenne, la variance et l'autocovariance de la série ne dépendent pas du temps.", options: ["La série est constante", "Moyenne et variance ne varient pas dans le temps", "La série n'a pas de bruit", "La série est toujours croissante"], correct: 1 },
+  { id: 36, deck: "quant", sub: "Séries temporelles", q: "Que teste le test de Dickey-Fuller augmenté (ADF) ?", a: "La présence d'une racine unitaire dans une série, c'est-à-dire si elle est non-stationnaire.", options: ["La normalité des résidus", "La présence d'une racine unitaire (non-stationnarité)", "L'hétéroscédasticité", "L'autocorrélation des résidus"], correct: 1 },
+];
+
+/* ------------------------------------------------------------------ */
+/* ICONES (SVG inline, pas de dépendance)                              */
+/* ------------------------------------------------------------------ */
+const ICONS = {
+  chevronLeft: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>',
+  chevronRight: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>',
+  shuffle: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 3 21 3 21 8"></polyline><line x1="4" y1="20" x2="21" y2="3"></line><polyline points="21 16 21 21 16 21"></polyline><line x1="15" y1="15" x2="21" y2="21"></line><line x1="4" y1="4" x2="9" y2="9"></line></svg>',
+  rotate: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>',
+  check: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>',
+  x: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>',
+  up: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>',
+  down: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line></svg>',
+  chart: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"></path><path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"></path></svg>',
+  sigma: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 7V4H6l6 8-6 8h12v-3"></path></svg>',
+};
+
+/* ------------------------------------------------------------------ */
+/* STOCKAGE (localStorage)                                             */
+/* ------------------------------------------------------------------ */
+function loadBestScores() {
+  try { return JSON.parse(localStorage.getItem("ff-best-scores") || "{}"); }
+  catch { return {}; }
+}
+function saveBestScores(scores) {
+  try { localStorage.setItem("ff-best-scores", JSON.stringify(scores)); }
+  catch (e) { console.error(e); }
+}
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+/* ------------------------------------------------------------------ */
+/* STATE                                                                */
+/* ------------------------------------------------------------------ */
+let bestScores = loadBestScores();
+let state = { view: "home", deckKey: "marche", sub: "Toutes" };
+const app = document.getElementById("app");
+
+function setState(patch) { state = { ...state, ...patch }; render(); }
+
+/* ------------------------------------------------------------------ */
+/* RENDER: HOME                                                        */
+/* ------------------------------------------------------------------ */
+function renderHome() {
+  const deckKey = state.deckKey, sub = state.sub;
+  const deck = DECKS[deckKey];
+  const subs = ["Toutes", ...deck.subs];
+
+  const tickerItems = Object.entries(DECKS).flatMap(([key, d]) => {
+    const cardCount = CARDS.filter(c => c.deck === key).length;
+    const best = bestScores[key];
+    const label = best ? `${best.score}/${best.total}` : "—";
+    const up = best && best.score / best.total >= 0.7;
+    return [{ short: d.short, cards: cardCount, best: label, up }];
+  });
+  const loop = [...tickerItems, ...tickerItems, ...tickerItems];
+
+  app.innerHTML = `
+    <div class="home">
+      <div class="hero-eyebrow">DOSSIER D'ÉTUDE — SESSION ${new Date().getFullYear()}</div>
+      <h1 class="hero-title">Le grimoire du <span class="hero-accent">trading desk</span></h1>
+      <p class="hero-sub">${CARDS.length} fiches. Deux dossiers : marché et quantitatif. Révisez en mode fiches, testez-vous en mode quiz.</p>
+
+      <div class="ticker-wrap"><div class="ticker-track">
+        ${loop.map(it => `
+          <span class="ticker-item">
+            <span class="ticker-sym">${it.short}</span>
+            <span>${it.cards} fiches</span>
+            ${it.up ? ICONS.up : ICONS.down}
+            <span class="${it.up ? "ticker-up" : "ticker-down"}">${it.best}</span>
+          </span>`).join("")}
+      </div></div>
+
+      <div class="deck-select">
+        ${Object.entries(DECKS).map(([key, d]) => `
+          <button class="deck-tab ${deckKey === key ? "active" : ""}" style="--accent:${d.accent}" data-deck="${key}">
+            ${key === "marche" ? ICONS.chart : ICONS.sigma} ${d.label}
+          </button>`).join("")}
+      </div>
+
+      <div class="sub-chips">
+        ${subs.map(s => `
+          <button class="chip ${sub === s ? "chip-active" : ""}" style="--accent:${deck.accent}" data-sub="${s}">${s}</button>
+        `).join("")}
+      </div>
+
+      <div class="mode-cards">
+        <div class="mode-card" style="--accent:${deck.accent}">
+          <div class="mode-card-label">MODE 01</div>
+          <h3>Fiches</h3>
+          <p>Retournez chaque carte, à votre rythme.</p>
+          <button class="mode-btn" data-start="flash">Réviser ${ICONS.chevronRight}</button>
+        </div>
+        <div class="mode-card" style="--accent:${deck.accent}">
+          <div class="mode-card-label">MODE 02</div>
+          <h3>Quiz</h3>
+          <p>QCM chronométré par votre propre mémoire.</p>
+          <button class="mode-btn" data-start="quiz">Démarrer ${ICONS.chevronRight}</button>
+        </div>
+      </div>
+    </div>
+    <footer class="site-footer">flashcards-finance · fait avec Claude</footer>
+  `;
+
+  app.querySelectorAll("[data-deck]").forEach(btn =>
+    btn.addEventListener("click", () => setState({ deckKey: btn.dataset.deck, sub: "Toutes" })));
+  app.querySelectorAll("[data-sub]").forEach(btn =>
+    btn.addEventListener("click", () => setState({ sub: btn.dataset.sub })));
+  app.querySelectorAll("[data-start]").forEach(btn =>
+    btn.addEventListener("click", () => startSession(deckKey, sub, btn.dataset.start)));
+}
+
+function startSession(deckKey, sub, mode) {
+  const filtered = CARDS.filter(c => c.deck === deckKey && (sub === "Toutes" || c.sub === sub));
+  const accent = DECKS[deckKey].accent;
+  if (mode === "flash") {
+    setState({ view: "flash", deckKey, cards: filtered, accent, order: filtered.map((_, i) => i), pos: 0, flipped: false });
+  } else {
+    setState({ view: "quiz", deckKey, cards: filtered, accent, order: shuffle(filtered.map((_, i) => i)), pos: 0, selected: null, score: 0, missed: [] });
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* RENDER: FLASHCARDS                                                   */
+/* ------------------------------------------------------------------ */
+function renderFlash() {
+  const { cards, order, pos, flipped, accent } = state;
+  const card = cards[order[pos]];
+
+  app.innerHTML = `
+    <div class="mode-screen" style="--accent:${accent}">
+      <div class="mode-header">
+        <button class="exit-btn" id="exit">${ICONS.chevronLeft} Retour</button>
+        <div class="progress-label">${pos + 1} / ${order.length}</div>
+        <button class="exit-btn" id="shuffleBtn">${ICONS.shuffle} Mélanger</button>
+      </div>
+      <div class="card-stage">
+        <div class="flash-card ${flipped ? "is-flipped" : ""}" id="flashCard">
+          <div class="flash-face flash-front">
+            <div class="flash-tag">${card.sub}</div>
+            <div class="flash-q">${card.q}</div>
+            <div class="flash-hint">Touchez pour retourner</div>
+          </div>
+          <div class="flash-face flash-back">
+            <div class="flash-tag flash-tag-back">Réponse</div>
+            <div class="flash-a">${card.a}</div>
+          </div>
+        </div>
+      </div>
+      <div class="nav-row">
+        <button class="nav-btn" id="prevBtn">${ICONS.chevronLeft}</button>
+        <button class="nav-btn nav-btn-flip" id="flipBtn">${ICONS.rotate} Retourner</button>
+        <button class="nav-btn" id="nextBtn">${ICONS.chevronRight}</button>
+      </div>
+    </div>
+  `;
+
+  document.getElementById("exit").addEventListener("click", () => setState({ view: "home" }));
+  document.getElementById("flashCard").addEventListener("click", () => setState({ flipped: !flipped }));
+  document.getElementById("flipBtn").addEventListener("click", () => setState({ flipped: !flipped }));
+  document.getElementById("shuffleBtn").addEventListener("click", () =>
+    setState({ order: shuffle(cards.map((_, i) => i)), pos: 0, flipped: false }));
+  document.getElementById("prevBtn").addEventListener("click", () =>
+    setState({ pos: (pos - 1 + order.length) % order.length, flipped: false }));
+  document.getElementById("nextBtn").addEventListener("click", () =>
+    setState({ pos: (pos + 1) % order.length, flipped: false }));
+}
+
+/* ------------------------------------------------------------------ */
+/* RENDER: QUIZ                                                        */
+/* ------------------------------------------------------------------ */
+function renderQuiz() {
+  const { cards, order, pos, selected, score, missed, accent, deckKey } = state;
+  const card = cards[order[pos]];
+
+  app.innerHTML = `
+    <div class="mode-screen" style="--accent:${accent}">
+      <div class="mode-header">
+        <button class="exit-btn" id="exit">${ICONS.chevronLeft} Quitter</button>
+        <div class="progress-label">Question ${pos + 1} / ${order.length} — Score ${score}</div>
+        <div style="width:70px"></div>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${(pos / order.length) * 100}%"></div></div>
+      <div class="quiz-card">
+        <div class="flash-tag">${card.sub}</div>
+        <div class="quiz-q">${card.q}</div>
+        <div class="quiz-options">
+          ${card.options.map((opt, i) => {
+            let cls = "quiz-option";
+            let icon = "";
+            if (selected !== null) {
+              if (i === card.correct) { cls += " opt-correct"; icon = `<span class="opt-icon">${ICONS.check}</span>`; }
+              else if (i === selected) { cls += " opt-wrong"; icon = `<span class="opt-icon">${ICONS.x}</span>`; }
+            }
+            return `<button class="${cls}" data-opt="${i}" ${selected !== null ? "disabled" : ""}>
+              <span class="opt-letter">${String.fromCharCode(65 + i)}</span><span>${opt}</span>${icon}
+            </button>`;
+          }).join("")}
+        </div>
+        ${selected !== null ? `<div class="quiz-explain"><div class="quiz-explain-label">Explication</div>${card.a}</div>` : ""}
+      </div>
+      ${selected !== null ? `<div class="nav-row">
+        <button class="mode-btn quiz-next" id="nextQ">${pos + 1 >= order.length ? "Voir le résultat" : "Question suivante"} ${ICONS.chevronRight}</button>
+      </div>` : ""}
+    </div>
+  `;
+
+  document.getElementById("exit").addEventListener("click", () => setState({ view: "home" }));
+  if (selected === null) {
+    app.querySelectorAll("[data-opt]").forEach(btn =>
+      btn.addEventListener("click", () => {
+        const idx = Number(btn.dataset.opt);
+        const correct = idx === card.correct;
+        setState({ selected: idx, score: score + (correct ? 1 : 0), missed: correct ? missed : [...missed, card] });
+      }));
+  } else {
+    document.getElementById("nextQ").addEventListener("click", () => {
+      if (pos + 1 >= order.length) {
+        finishQuiz(deckKey, score, order.length, missed);
+      } else {
+        setState({ pos: pos + 1, selected: null });
+      }
+    });
+  }
+}
+
+function finishQuiz(deckKey, score, total, missed) {
+  const cur = bestScores[deckKey];
+  if (!cur || score / total > cur.score / cur.total) {
+    bestScores = { ...bestScores, [deckKey]: { score, total } };
+    saveBestScores(bestScores);
+  }
+  setState({ view: "result", score, total, missed });
+}
+
+function renderResult() {
+  const { score, total, missed, accent } = state;
+  const pct = Math.round((score / total) * 100);
+  app.innerHTML = `
+    <div class="mode-screen" style="--accent:${accent}">
+      <div class="result-panel">
+        <div class="result-eyebrow">CLÔTURE DE SÉANCE</div>
+        <div class="result-score">${score}<span class="result-total">/${total}</span></div>
+        <div class="result-pct">${pct}% de réussite</div>
+        ${missed.length > 0 ? `
+          <div class="missed-list">
+            <div class="missed-title">À revoir</div>
+            ${missed.slice(0, 5).map(m => `<div class="missed-item">${m.q}</div>`).join("")}
+            ${missed.length > 5 ? `<div class="missed-more">+${missed.length - 5} autres</div>` : ""}
+          </div>` : ""}
+        <button class="mode-btn result-btn" id="backHome">Retour à l'accueil</button>
+      </div>
+    </div>
+  `;
+  document.getElementById("backHome").addEventListener("click", () => setState({ view: "home" }));
+}
+
+/* ------------------------------------------------------------------ */
+/* MAIN RENDER DISPATCH                                                 */
+/* ------------------------------------------------------------------ */
+function render() {
+  if (state.view === "home") renderHome();
+  else if (state.view === "flash") renderFlash();
+  else if (state.view === "quiz") renderQuiz();
+  else if (state.view === "result") renderResult();
+}
+
+render();
+</script>
+</body>
+</html>
